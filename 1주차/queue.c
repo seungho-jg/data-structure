@@ -75,6 +75,7 @@ void initializeQueue(Queue *q) {
 // 큐가 비었는지 확인
 int isEmpty(Queue *q) {
     /* 구현하세요 */
+    if (q->rear == -1) return 1;
     return 0; // 임시 리턴
 }
 
@@ -82,20 +83,37 @@ int isEmpty(Queue *q) {
 // 큐가 꽉 찼는지 확인
 int isFull(Queue *q) {
     /* 구현하세요 */
-    return 0; // 임시 리턴
+    if(q->rear == MAX - 1) return 1;
+    return 0;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // 삽입
 void enqueue(Queue *q, int value) {
     /* 구현하세요 */
+    if (isEmpty(q)) q->front++;
+    if (isFull(q)) return;
+    q->rear += 1;
+    q->items[q->rear] = value;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 // 삭제
 int dequeue(Queue *q) {
     /* 구현하세요 */
-    return -1; // 임시 리턴
+    if (isEmpty(q)) return -1;
+    if (q->rear == q->front){
+        int res = q->items[q->front];
+        initializeQueue(q);
+        return res;
+    }
+    int res = q->items[q->front];
+    for(int i = q->front; i <= q->rear; i++ ) {
+        q->items[i-1] = q->items[i];
+    }
+    q->rear -= 1;
+    
+    return res;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
