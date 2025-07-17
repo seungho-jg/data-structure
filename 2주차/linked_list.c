@@ -118,6 +118,10 @@ void insert(LinkedList *list, int data) {
     // TODO: 새 노드를 동적으로 할당하고, 입력받은 데이터로 초기화합니다.
     //       그 다음, 새 노드가 리스트의 첫 번째 노드(head)를 가리키게 하고,
     //       리스트의 head를 새 노드로 변경합니다.
+    Node *new_node = malloc(sizeof(Node));
+    new_node->data = data;
+    new_node->next = list->head;
+    list->head = new_node;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -127,6 +131,43 @@ void removeNode(LinkedList *list, int data) {
     //       삭제할 노드가 head인 경우, head를 다음 노드로 변경합니다.
     //       그렇지 않은 경우, 이전 노드가 삭제할 노드의 다음 노드를 가리키게 합니다.
     //       마지막으로, 삭제된 노드의 메모리를 해제합니다.
+    if (list->head == NULL) {
+        printf("삭제할 노드가 없습니다");
+        return;
+    }
+    Node *prev_node = NULL;
+    Node *current_node = list->head;
+    // 맨 처음 노드일 경우
+    if (current_node->data == data) {
+        if(current_node->next == NULL) {
+            // 마지막 노드일 경우
+            list->head = NULL;
+        } else {
+            list->head = current_node->next;
+        }
+        
+        free(current_node);
+        return;
+    }
+    while (current_node->next != NULL) {
+        prev_node = current_node;
+        current_node = current_node->next;
+        
+
+        if (current_node->data == data) {
+            prev_node->next = current_node->next;
+            free(current_node);
+            return;
+        }
+
+    }
+    // 맨 마지막 노드일 경우
+    if (current_node->data == data) {
+        prev_node->next = NULL;
+        free(current_node);
+        return;
+    }
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -134,6 +175,14 @@ void removeNode(LinkedList *list, int data) {
 Node* search(LinkedList *list, int data) {
     // TODO: head부터 시작하여 리스트를 순회하며 data와 일치하는 노드를 찾습니다.
     //       찾으면 해당 노드의 포인터를 반환하고, 찾지 못하면 NULL을 반환합니다.
+    Node *current_node = list->head;
+    while (current_node != NULL) {
+        if (current_node->data == data) {
+            return current_node;
+        }
+        current_node = current_node->next;
+    }
+    
     return NULL;
 }
 
@@ -186,6 +235,12 @@ void printList(LinkedList *list) {
     //       각 노드의 데이터를 출력합니다. 리스트가 비어있다면 "List is empty."를 출력합니다.
     if (list->head == NULL) {
         printf("List is empty.\n");
+        return;
+    }
+    Node *current_node = list->head;
+    while (current_node != NULL) {
+        printf("%d-", current_node->data);
+        current_node = current_node->next;
     }
 }
 
