@@ -118,7 +118,7 @@ void insert(LinkedList *list, int data) {
     // TODO: 새 노드를 동적으로 할당하고, 입력받은 데이터로 초기화합니다.
     //       그 다음, 새 노드가 리스트의 첫 번째 노드(head)를 가리키게 하고,
     //       리스트의 head를 새 노드로 변경합니다.
-    Node *new_node = malloc(sizeof(Node));
+    Node *new_node = (Node *)malloc(sizeof(Node));
     new_node->data = data;
     new_node->next = list->head;
     list->head = new_node;
@@ -192,6 +192,28 @@ void reverse(LinkedList *list) {
     // TODO: 세 개의 포인터(previous, current, next)를 사용합니다.
     //       current 노드의 next가 previous를 가리키도록 변경하는 작업을
     //       리스트의 끝까지 반복합니다. 마지막에 head를 이전의 마지막 노드로 변경합니다.
+
+    // list가 NULL이거나 head가 NULL일때 리턴
+    if(list == NULL || list->head == NULL) return;
+
+    Node *previous = NULL;
+    Node *next = NULL;
+    Node *current = list->head;
+    
+    while(current->next != NULL) {
+        if(next == NULL) {
+            // head일 경우 처리
+            next = current->next;
+            current->next = NULL;
+        } else {
+            next = current->next;
+            current->next = previous;
+        }
+        previous = current;
+        current = next;
+    }
+    // 마지막 노드를 헤더로
+    list->head = current;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
