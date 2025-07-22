@@ -224,6 +224,19 @@ void sort(LinkedList *list) {
     //       2. split() 함수를 사용해 리스트를 두 개의 하위 리스트로 분할합니다.
     //       3. 각 하위 리스트에 대해 재귀적으로 sort()를 호출합니다.
     //       4. merge() 함수를 사용해 정렬된 두 하위 리스트를 다시 하나로 병합합니다.
+    //1
+    if (list == NULL || list->head ==  NULL || list->head->next == NULL) return;
+    //2
+    // LinkedList *front = (LinkedList*) malloc(sizeof(LinkedList));
+    // LinkedList *back = (LinkedList*) malloc(sizeof(LinkedList));
+    LinkedList front = {NULL};
+    LinkedList back = {NULL};
+    split(list, &front, &back);
+    //3
+    sort(&front);
+    sort(&back);
+    //4
+    merge(list, &front, &back);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -240,6 +253,24 @@ void split(LinkedList *source, LinkedList *front, LinkedList *back) {
     // TODO: "느린 포인터"와 "빠른 포인터" 기법을 사용합니다.
     //       빠른 포인터가 리스트의 끝에 도달할 때, 느린 포인터는 리스트의 중앙에 위치하게 됩니다.
     //       중앙을 기준으로 리스트를 두 부분으로 나눕니다.
+    if(source == NULL || source->head == NULL) return;
+
+    Node *slow = source->head;
+    Node *fast = source->head;
+
+    int i = 0;
+
+    while(fast->next != NULL) {
+        // fast가 두번 이동할때 slow는 한번
+        fast = fast->next;
+        if(i % 2 != 0) {
+            slow = slow->next;
+        }
+        i++;
+    }
+    front->head = source->head;
+    back->head = slow->next;
+    slow->next = NULL; // 분리해줘야한다.
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -248,6 +279,57 @@ void merge(LinkedList *result, LinkedList *front, LinkedList *back) {
     // TODO: front와 back 리스트의 노드를 하나씩 비교하면서
     //       더 작은 값을 가진 노드를 result 리스트에 추가하는 작업을 반복합니다.
     //       한쪽 리스트가 모두 소진되면, 남은 리스트의 노드들을 모두 result에 붙입니다.
+    Node *merge_head = NULL;
+    Node *current = NULL;
+    Node *left = front->head;
+    Node *right = back->head;
+
+    // 둘 다 NULL인 경우
+    if (left == NULL && right == NULL) {
+        result->head = NULL;
+        return;
+    }
+
+    // 처음 넣을때
+    if (merge_head == NULL) {
+        // left가 null일때
+        if (left == NULL) {
+            merge_head = right;
+            current = right;
+            if (right) right = right->next;
+        // left가 null이 아니고 right가 null일때
+        } else if (right == NULL) {
+            merge_head = left;
+            current = left;
+            left = left->next;
+        // 둘다 null이 아니라면 비교
+        } else if (left->data < right->data) {
+            merge_head = left;
+            current = left;
+            left = left->next;
+        } else {
+            merge_head = right;
+            current = right;
+            right = right->next;
+        }
+    }
+
+    while(left != NULL && right != NULL) {
+
+        // 오름차순 정렬: 작으면 current에 연결
+        if(left->data < right->data) {
+            current->next = left;
+            left = left->next;
+        } else {
+            current->next = right;
+            right = right->next;
+        }
+        current = current->next;
+    }
+    if(right != NULL) current->next = right;
+    if(left !=NULL) current->next = left;
+
+    result->head = merge_head;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
