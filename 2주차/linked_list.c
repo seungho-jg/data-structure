@@ -212,7 +212,8 @@ void reverse(LinkedList *list) {
         previous = current;
         current = next;
     }
-    // 마지막 노드를 헤더로
+    // 마지막 노드
+    current->next = previous;
     list->head = current;
 }
 
